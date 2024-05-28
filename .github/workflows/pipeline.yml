@@ -1,0 +1,52 @@
+name: (CI) Assembling and Testing
+on:
+  workflow_dispatch:
+  push:
+    branches: [ CHR8486, arreglosCole ]
+
+jobs:
+    assemble:
+        runs-on: ubuntu-latest
+        env:
+            GITHUB_LOGIN: ${{ github.actor }}
+            GITHUB_PACKAGES: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+        -   name: This step creates a copy of the repository for the workflow to run on
+            uses: actions/checkout@v3
+        -   name: This step sets up java on the machine running this workflow
+            uses: actions/setup-java@v3
+            with:
+                distribution: 'temurin'
+                java-version: '16'
+            
+        -   name: Assemble the project / creating a jar file
+            run: |
+                chmod +x gradlew        
+                ./gradlew assemble
+        -   name: My UVUS
+            run: |
+                echo "My UVUS is CHR8486"
+    test:
+        runs-on: ubuntu-latest
+        needs: assemble
+        env:
+            GITHUB_LOGIN: ${{ github.actor }}
+            GITHUB_PACKAGES: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+        -   name: This step creates a copy of the repository for the workflow to run on
+            uses: actions/checkout@v3
+        -   name: This step sets up java on the machine running this workflow
+            uses: actions/setup-java@v3
+            with:
+                distribution: 'temurin'
+                java-version: '16'
+            
+        -   name: Testing the code
+            run: |
+                chmod +x gradlew        
+                ./gradlew test
+        -   name: My UVUS
+            run: |
+                echo "My UVUS is CHR8486"
